@@ -87,18 +87,40 @@ app.post("/api/generate-document", async (req, res) => {
 
 // Vite Integration
 async function setupVite() {
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
+  console.log("Setting up Vite middleware...");
+  try {
+    if (process.env.NODE_ENV !== "production") {
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+      
+      // Explicitly serve index.html for the root route in dev mode if needed
+      app.get("*", async (req, res, next) => {
+        if (req.url.startsWith("/api")) return next();
+        try {
+          const fs = await import("fs");
+          const template = fs.readFileSync(path.resolve(process.cwd(), "index.html"), "utf-8");
+          const html = await vite.transformIndexHtml(req.url, template);
+          res.status(200).set({ "Content-Type": "text/html" }).end(html);
+        } catch (e) {
+          vite.ssrFixStacktrace(e as Error);
+          next(e);
+        }
+      });
+      
+      console.log("Vite middleware mounted.");
+    } else {
+      const distPath = path.join(process.cwd(), "dist");
+      app.use(express.static(distPath));
+      app.get("*", (req, res) => {
+        res.sendFile(path.join(distPath, "index.html"));
+      });
+      console.log("Production static assets mounted.");
+    }
+  } catch (err) {
+    console.error("Vite Setup Failed:", err);
   }
 }
 
@@ -106,4 +128,6 @@ setupVite().then(() => {
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://0.0.0.0:${PORT}`);
   });
+}).catch(err => {
+  console.error("Server Start Failed:", err);
 });

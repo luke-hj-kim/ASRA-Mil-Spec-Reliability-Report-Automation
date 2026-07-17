@@ -7,9 +7,9 @@ interface UploadSectionProps {
 
 export default function UploadSection({ onUpload }: UploadSectionProps) {
   const uploadTypes = [
-    { id: 'spec', label: 'Technical Spec / MIL-STD', icon: FileText, color: 'blue', desc: 'PDF/Docx' },
-    { id: 'data', label: 'Power Consumption / Test Logs', icon: Table, color: 'emerald', desc: 'Excel/CSV' },
-    { id: 'notes', label: 'Meeting Notes / Voice', icon: Mic, color: 'amber', desc: 'Text/Audio' },
+    { id: 'spec', label: 'Technical Spec / MIL-STD', icon: FileText, desc: 'PDF/Docx' },
+    { id: 'data', label: 'Power Consumption / Test Logs', icon: Table, desc: 'Excel/CSV' },
+    { id: 'notes', label: 'Meeting Notes / Voice', icon: Mic, desc: 'Text/Audio' },
   ];
 
   return (
@@ -20,7 +20,7 @@ export default function UploadSection({ onUpload }: UploadSectionProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: idx * 0.1 }}
-          className="group relative p-6 bg-white border border-slate-200 rounded-2xl hover:border-slate-400 hover:shadow-xl transition-all cursor-pointer overflow-hidden"
+          className="group relative p-8 bg-surface-card border border-hairline rounded-xl hover:border-coral/30 hover:shadow-2xl hover:shadow-coral/5 transition-all cursor-pointer overflow-hidden"
         >
           <input
             type="file"
@@ -29,18 +29,18 @@ export default function UploadSection({ onUpload }: UploadSectionProps) {
               if (e.target.files?.[0]) onUpload(type.id, e.target.files[0]);
             }}
           />
-          <div className={`w-12 h-12 rounded-xl bg-${type.color}-50 flex items-center justify-center text-${type.color}-600 mb-4 group-hover:scale-110 transition-transform`}>
+          <div className="w-12 h-12 rounded-lg bg-canvas flex items-center justify-center text-coral mb-6 group-hover:scale-110 transition-transform border border-hairline">
             <type.icon size={24} />
           </div>
-          <h3 className="font-sans font-semibold text-slate-900 mb-1">{type.label}</h3>
-          <p className="text-sm text-slate-500">{type.desc}</p>
+          <h3 className="font-serif text-xl text-ink mb-2">{type.label}</h3>
+          <p className="text-sm text-ink/60 leading-relaxed mb-6">{type.desc}</p>
           
-          <div className="mt-4 flex items-center gap-2 text-xs font-medium text-slate-400">
-            <FileUp size={14} />
+          <div className="flex items-center gap-2 text-[10px] font-semibold text-coral uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">
+            <FileUp size={12} />
             <span>Click or drag to upload</span>
           </div>
           
-          <div className={`absolute bottom-0 left-0 h-1 bg-${type.color}-500 w-0 group-hover:w-full transition-all duration-500`} />
+          <div className="absolute bottom-0 left-0 h-1 bg-coral w-0 group-hover:w-full transition-all duration-700 ease-in-out" />
         </motion.div>
       ))}
     </div>

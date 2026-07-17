@@ -5,7 +5,7 @@ import AnalysisView from './components/AnalysisView';
 import DocumentPreview from './components/DocumentPreview';
 import { AppState, AnalysisResult } from './types';
 import { motion, AnimatePresence } from 'motion/react';
-import { Loader2, ArrowRight, RotateCcw } from 'lucide-react';
+import { Loader2, ArrowRight, RotateCcw, Rocket } from 'lucide-react';
 
 export default function App() {
   const [state, setState] = useState<AppState>({
@@ -18,8 +18,6 @@ export default function App() {
   const handleUpload = async (type: string, file: File) => {
     setState(prev => ({ ...prev, isAnalyzing: true, result: null, generatedDoc: null }));
     
-    // In a real app, we would read the file content here.
-    // For the prototype, we'll simulate an analysis based on the file type.
     try {
       const response = await fetch('/api/analyze', {
         method: 'POST',
@@ -32,7 +30,6 @@ export default function App() {
       
       const analysis: AnalysisResult = await response.json();
       
-      // Inject some more specific mock data for the prototype if the API returns empty/generic
       if (!analysis.requirements?.length) {
         analysis.requirements = [
           { id: '1', category: 'Voltage', value: '28V DC Nominal', source: 'RFP Section 4.1' },
@@ -98,10 +95,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900">
+    <div className="min-h-screen bg-canvas font-sans selection:bg-coral/10 selection:text-coral">
       <Header />
       
-      <main className="max-w-7xl mx-auto px-6 py-12">
+      <main className="max-w-7xl mx-auto px-6 py-20">
         <AnimatePresence mode="wait">
           {!state.result && !state.isAnalyzing && (
             <motion.div
@@ -109,20 +106,35 @@ export default function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="space-y-12"
+              className="space-y-16"
             >
-              <div className="max-w-2xl">
-                <h2 className="text-4xl font-bold text-slate-900 tracking-tight mb-4">
+              <div className="max-w-3xl">
+                <h2 className="text-6xl font-serif text-ink tracking-tight leading-[1.1] mb-8">
                   Engineering Reliability, <br />
-                  <span className="text-blue-600">Automated.</span>
+                  <span className="text-coral italic">Automated.</span>
                 </h2>
-                <p className="text-lg text-slate-600 leading-relaxed">
-                  Upload your technical specifications, power consumption logs, and meeting notes. 
-                  ASRA identifies conflicts, ensures MIL-STD compliance, and generates verified documentation.
+                <p className="text-xl text-ink/60 leading-relaxed max-w-2xl">
+                  Analyze technical specifications, power logs, and meeting notes with AI grounded in MIL-STD defense standards. 
+                  Identify discrepancies before they reach production.
                 </p>
               </div>
               
               <UploadSection onUpload={handleUpload} />
+              
+              <div className="pt-20 border-t border-hairline grid grid-cols-1 md:grid-cols-3 gap-12 text-ink/40">
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-coral">01. Intelligent Indexing</h4>
+                  <p className="text-xs leading-relaxed">Multi-modal parsing of PDF, CSV, and voice records into a unified technical knowledge base.</p>
+                </div>
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-coral">02. Conflict Resolution</h4>
+                  <p className="text-xs leading-relaxed">Automated cross-referencing against MIL-STD-461G and project-specific RFP constraints.</p>
+                </div>
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-coral">03. Verified Output</h4>
+                  <p className="text-xs leading-relaxed">Human-in-the-loop validation ensures 100% data integrity before document finalization.</p>
+                </div>
+              </div>
             </motion.div>
           )}
 
@@ -132,15 +144,15 @@ export default function App() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex flex-col items-center justify-center py-32 space-y-6"
+              className="flex flex-col items-center justify-center py-40 space-y-8"
             >
               <div className="relative">
-                <Loader2 size={48} className="text-blue-600 animate-spin" />
-                <div className="absolute inset-0 bg-blue-400 blur-2xl opacity-20 animate-pulse" />
+                <Loader2 size={48} className="text-coral animate-spin" />
+                <div className="absolute inset-0 bg-coral blur-3xl opacity-20 animate-pulse" />
               </div>
               <div className="text-center">
-                <h3 className="font-bold text-slate-900">Processing Aerospace Data</h3>
-                <p className="text-sm text-slate-500 font-mono">ALIGNING VECTORS & VERIFYING MIL-STD CONSTRAINTS...</p>
+                <h3 className="font-serif text-2xl text-ink mb-2">Analyzing Aerospace Systems</h3>
+                <p className="text-[10px] text-ink/40 font-mono uppercase tracking-[0.3em]">SYNCHRONIZING_REQUIREMENTS_MATRIX...</p>
               </div>
             </motion.div>
           )}
@@ -151,7 +163,7 @@ export default function App() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-12"
+              className="space-y-16"
             >
               <AnalysisView 
                 result={state.result} 
@@ -159,21 +171,21 @@ export default function App() {
                 confirmedData={state.confirmedData} 
               />
               
-              <div className="flex justify-between items-center pt-8 border-t border-slate-200">
+              <div className="flex justify-between items-center pt-10 border-t border-hairline">
                 <button 
                   onClick={reset}
-                  className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-semibold transition-colors"
+                  className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-ink/40 hover:text-ink transition-colors"
                 >
-                  <RotateCcw size={18} /> Restart Analysis
+                  <RotateCcw size={14} /> New Session
                 </button>
                 
                 <button
                   onClick={generateDoc}
                   disabled={Object.keys(state.confirmedData).length < state.result.questions.length}
-                  className="group flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-slate-200"
+                  className="group flex items-center gap-4 bg-coral text-white px-10 py-5 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-coral-active transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-2xl shadow-coral/20"
                 >
-                  Generate Documentation Draft 
-                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  Generate Documentation 
+                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             </motion.div>
@@ -184,18 +196,18 @@ export default function App() {
               key="document"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-8"
+              className="space-y-10"
             >
               <div className="flex justify-between items-end">
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-900">Generated Technical Specification</h2>
-                  <p className="text-slate-500 text-sm">Review the draft and finalize for export.</p>
+                  <h2 className="text-4xl font-serif text-ink tracking-tight">Specification Draft</h2>
+                  <p className="text-ink/40 text-sm mt-2 uppercase tracking-widest font-bold">READY_FOR_FINAL_REVIEW</p>
                 </div>
                 <button 
                   onClick={() => setState(prev => ({ ...prev, generatedDoc: null }))}
-                  className="text-sm font-semibold text-blue-600 hover:underline"
+                  className="text-xs font-bold text-coral uppercase tracking-widest hover:underline"
                 >
-                  Return to Verification Matrix
+                  Back to Matrix
                 </button>
               </div>
               
@@ -205,12 +217,15 @@ export default function App() {
         </AnimatePresence>
       </main>
       
-      <footer className="mt-20 border-t border-slate-200 py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center text-xs text-slate-400 font-mono">
-          <p>© 2026 HANWHA AEROSPACE - ASRA DIGITAL ASSISTANT V1.0</p>
-          <div className="flex gap-8">
-            <span>DATA ENCRYPTION: AES-256</span>
-            <span>PROMPT GROUNDING: ENABLED</span>
+      <footer className="mt-40 border-t border-hairline py-16 bg-surface-dark">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] text-on-dark-soft font-mono uppercase tracking-[0.2em]">
+          <div className="flex items-center gap-4">
+            <Rocket size={16} className="text-coral" />
+            <p>© 2026 HANWHA AEROSPACE | LS_DIVISION</p>
+          </div>
+          <div className="flex gap-12">
+            <span className="flex items-center gap-2"><div className="w-1 h-1 bg-coral rounded-full" /> ENCRYPTION: AES-256</span>
+            <span className="flex items-center gap-2"><div className="w-1 h-1 bg-coral rounded-full" /> CORE: ASRA_ENGINE_V1</span>
           </div>
         </div>
       </footer>
