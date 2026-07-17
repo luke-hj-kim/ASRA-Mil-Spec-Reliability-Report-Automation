@@ -1,0 +1,8 @@
+{
+  "name": "ASRA: Aero-Spec Reliability Assistant",
+  "description": "AI-powered assistant for defense/space power system requirement analysis and documentation automation, specifically designed for Hanwha Aerospace engineering workflows.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
